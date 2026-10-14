@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sorbet Citron</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF6EC; --card:#FFFFFF; --ink:#2A1A14; --muted:#6B5A50; --line:#E8D9B8;
+  --accent:#9A6B00; --accent-2:#D3A625; --violet:#740001; --plum:#3B0A0A;
+  --ok:#1F7A35; --ok-bg:#E3F4E6; --bad:#B8322A; --bad-bg:#FBE4E1; --warn-bg:#FFF1CF; --warn-ink:#5A3E00;
+  --paper:#FFFCF3; --paper-line:#DCC9A0; --field:#FFFFFF; --field-line:#B5A27E;
+  --font:"Comic Sans MS","Comic Neue","Chalkboard SE",cursive;
+}
+*{box-sizing:border-box}
+html{font-size:19px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 80px}
+header.top{position:relative;color:#fff;border-bottom:5px solid #D3A625;
+  background:
+   radial-gradient(1.5px 1.5px at 8% 30%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 18% 70%,#FCEBB6 50%,transparent 51%),
+   radial-gradient(1.5px 1.5px at 33% 20%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 47% 60%,#fff 50%,transparent 51%),
+   radial-gradient(2px 2px at 61% 25%,#FCEBB6 50%,transparent 51%),radial-gradient(1px 1px at 74% 75%,#fff 50%,transparent 51%),
+   radial-gradient(1.5px 1.5px at 88% 35%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 95% 80%,#FCEBB6 50%,transparent 51%),
+   linear-gradient(180deg,#14112B 0%,#2A1440 55%,#4A0F1A 100%)}
+.brand .logo{height:56px;width:56px}
+.brand .brandname{font-family:"Cinzel",Georgia,serif;letter-spacing:.04em;font-size:1.3rem}
+.brand .brandsub{font-size:.75rem;color:#F1D98A;border:1px solid #D3A625;border-radius:999px;padding:1px 9px;margin-left:4px}
+.logo-fb{font-size:1.6rem}
+body{background-image:radial-gradient(circle at 15% 10%,rgba(211,166,37,.10),transparent 40%),radial-gradient(circle at 85% 60%,rgba(116,0,1,.06),transparent 45%)}
+.hero{position:relative;overflow:hidden;border-radius:22px;margin:24px 0;padding:26px 24px 22px;color:#fff;
+  background:linear-gradient(180deg,#14112B 0%,#2A1440 60%,#4A0F1A 100%);border:3px solid #D3A625}
+.hero{display:flex;align-items:center;gap:22px}
+.hero .hlogo{flex:none;width:140px;height:140px;position:relative;z-index:1}
+.hero .htxt{position:relative;z-index:1;max-width:520px}
+@media (max-width:640px){.hero{flex-direction:column;align-items:flex-start}}
+.hero h1{color:#FCEBB6;margin:0 0 6px;font-family:"Cinzel",Georgia,serif;letter-spacing:.03em}
+.hero p{margin:0;color:#F3E6C4;max-width:560px}
+.hero svg{position:absolute;right:10px;bottom:0;height:150px;width:auto;opacity:.95}
+@media (max-width:640px){.hero svg{opacity:.35}}
+.sparkle{text-align:center;color:#D3A625;letter-spacing:.6em;margin:26px 0 0;font-size:1.1rem}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:1.25rem;display:flex;align-items:center;gap:10px}
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.nav button{background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:6px 16px;cursor:pointer;font-weight:700}
+.nav button.on{background:#fff;color:var(--plum);border-color:#fff}
+h1{font-size:2rem;margin:28px 0 4px;color:var(--violet)}
+h2{font-size:1.45rem;margin:0 0 10px}
+h3{font-size:1.2rem;margin:0 0 8px}
+.sub{color:#9A6B00;font-weight:700;font-size:1.15rem;margin:0 0 20px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:22px;margin:22px 0}
+.banner{background:linear-gradient(90deg,#4A0F1A,#740001);color:#fff;border-radius:14px;padding:12px 18px;display:flex;justify-content:space-between;gap:10px;font-weight:700;font-size:1.2rem;margin:34px 0 8px;flex-wrap:wrap}
+.banner.p1{background:#D3A625;color:#3B0A0A}
+.q .qh{border-bottom-color:var(--accent-2)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+label.f{display:block;font-weight:700;margin-bottom:4px}
+input[type=text],input[type=number],input[type=password],select,textarea{width:100%;background:var(--field);border:2px solid var(--field-line);border-radius:10px;padding:8px 10px;font-size:1rem}
+textarea{min-height:120px;resize:vertical;line-height:1.6}
+input:focus,select:focus,textarea:focus{outline:3px solid var(--accent-2);outline-offset:1px;border-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--violet);color:#fff;border:0;border-radius:12px;padding:12px 22px;font-weight:700;cursor:pointer;font-size:1.05rem}
+.btn:hover{filter:brightness(1.06)}
+.btn.sec{background:#fff;color:var(--violet);border:2px solid var(--violet)}
+.btn.vio{background:var(--violet)}
+.btn.small{padding:6px 14px;font-size:.9rem}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.choice{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:10px}
+.choice button{text-align:left;background:#fff;border:3px solid var(--line);border-radius:18px;padding:20px;cursor:pointer}
+.choice button:hover{border-color:var(--accent)}
+.choice b{display:block;font-size:1.3rem;color:var(--violet)}
+.choice span{color:var(--muted)}
+/* documents */
+.doc{background:linear-gradient(180deg,#FFFCF0,#FBF2DC);border:2px solid var(--paper-line);outline:1px solid #E8D29A;outline-offset:-8px;border-radius:14px;padding:18px;margin:22px 0;box-shadow:0 10px 24px -18px rgba(46,23,69,.45)}
+.doc .tag{display:inline-block;background:radial-gradient(circle at 35% 35%,#A3161A,#6A0A0C);color:#FCEBB6;border-radius:12px 18px 14px 20px;padding:3px 12px;box-shadow:0 2px 0 #4A0608;font-weight:700;margin-right:8px}
+.doc .title{font-weight:700;font-size:1.1rem}
+.doc .meta{color:var(--muted);font-size:.9rem;margin:4px 0 10px}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1.5px solid #B9A98F;padding:8px 10px;vertical-align:middle;text-align:left}
+th{background:var(--violet);color:#fff;text-align:center}
+td.c{text-align:center}
+td input,td select,td textarea{min-width:70px}
+td textarea{min-height:64px}
+.note{border-left:6px solid #D3A625;background:#FBF0D2;border-radius:10px;padding:12px 16px;margin:16px 0}
+.note.v{border-color:var(--violet);background:#F7E6E3}
+.q{margin:34px 0 0}
+.q .qh{border-bottom:3px solid var(--accent-2);padding-bottom:6px;margin-bottom:12px;font-weight:700;font-size:1.15rem}
+.q .qh .n{color:#9A6B00}
+.q .qh .pts{color:var(--violet);font-size:.95rem;white-space:nowrap}
+.check{display:flex;gap:10px;align-items:flex-start;margin:8px 0}
+.check input{width:24px;height:24px;margin-top:4px;flex:none}
+.radio-row{display:flex;gap:18px;flex-wrap:wrap}
+.radio-row label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.radio-row input{width:22px;height:22px}
+.saved{color:var(--ok);font-size:.9rem}
+.lock{max-width:520px;margin:40px auto}
+.err{color:var(--bad);font-weight:700}
+.hidden{display:none!important}
+.fin{background:linear-gradient(135deg,#FBF0D2,#F7E6E3);border:2px solid var(--accent-2)}
+/* prof */
+.prof{font-family:"Segoe UI",system-ui,sans-serif;font-size:.92rem}
+.prof h1,.prof h2,.prof h3{font-family:var(--font)}
+.layout{display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start}
+@media (max-width:820px){.layout{grid-template-columns:1fr}}
+.drop{display:block;border:3px dashed var(--violet);border-radius:16px;padding:22px;text-align:center;background:#FBF0EE;cursor:pointer}
+.drop.over{background:#F3D9D4}
+.slist{list-style:none;margin:0;padding:0}
+.slist li{border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0;cursor:pointer;background:#fff;display:flex;justify-content:space-between;gap:8px}
+.slist li.on{border-color:var(--violet);background:#F7E6E3}
+.slist .tot{font-weight:700;color:var(--violet);white-space:nowrap}
+.pill{display:inline-block;border-radius:999px;padding:1px 10px;font-weight:700;font-size:.85rem}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.ko{background:var(--bad-bg);color:var(--bad)}
+.pill.na{background:#eee;color:#555}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.tabs button{border:2px solid var(--violet);background:#fff;color:var(--violet);border-radius:999px;padding:8px 16px;font-weight:700;cursor:pointer;font-family:var(--font)}
+.tabs button.on{background:var(--violet);color:#fff}
+.gq{border:2px solid var(--line);border-radius:14px;padding:14px;margin:14px 0;background:#fff}
+.gq .gh{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.gq .gh b{font-family:var(--font);font-size:1.05rem}
+.score{display:flex;align-items:center;gap:6px;font-weight:700}
+.score input{width:80px;text-align:center}
+.auto{color:var(--muted);font-size:.85rem}
+.gq table{font-size:.85rem}
+.gq td.ok{background:var(--ok-bg)} .gq td.ko{background:var(--bad-bg)}
+.expect{color:var(--ok);font-size:.85rem}
+.stu{white-space:pre-wrap}
+.total{position:sticky;top:0;z-index:2;background:var(--plum);color:#fff;border-radius:14px;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.total .big{font-size:1.6rem;font-weight:700;font-family:var(--font)}
+.lv{display:flex;gap:6px}
+.lv label{border:2px solid #fff;border-radius:10px;padding:4px 10px;cursor:pointer}
+.lv input{display:none}
+.lv input:checked+span{font-weight:700}
+.lv label:has(input:checked){background:#fff;color:var(--plum)}
+@media print{
+  header.top,.noprint,.nav{display:none!important}
+  body{background:#fff}
+  .layout{grid-template-columns:1fr}
+  .total{position:static}
+  .gq{break-inside:avoid}
+}
+
+/* ================= UNIVERS VISUEL ================= */
+body{background:#0E0A1F;background-image:none;color:var(--ink)}
+.sky{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+  background:radial-gradient(ellipse at 20% 0%,#3A1F5C 0%,transparent 55%),radial-gradient(ellipse at 90% 30%,#4A0F1A 0%,transparent 50%),radial-gradient(ellipse at 50% 100%,#2A1440 0%,transparent 60%),linear-gradient(180deg,#120B24 0%,#1B1235 50%,#0E0A1F 100%)}
+.star{position:absolute;width:2px;height:2px;border-radius:50%;background:#FFF6D6;box-shadow:0 0 6px 1px rgba(255,236,170,.8);animation:tw 3s ease-in-out infinite}
+.star.big{width:3px;height:3px}
+@keyframes tw{0%,100%{opacity:.25}50%{opacity:1}}
+.candle{position:absolute;width:14px;height:46px;animation:fl 7s ease-in-out infinite}
+.candle::before{content:"";position:absolute;bottom:0;left:0;width:14px;height:40px;border-radius:3px;background:linear-gradient(90deg,#E9DFC6,#FFF9EA 45%,#D9CDAE)}
+.candle::after{content:"";position:absolute;top:-10px;left:3px;width:8px;height:14px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(circle at 50% 70%,#FFF7C2,#F7C548 55%,#E67E22);box-shadow:0 0 18px 8px rgba(247,197,72,.45);animation:flame 1.2s ease-in-out infinite alternate}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+@keyframes flame{from{transform:scaleY(1) rotate(-3deg)}to{transform:scaleY(1.15) rotate(3deg)}}
+@media (max-width:900px){.candle{display:none}}
+h1{color:#FCEBB6;text-shadow:0 2px 12px rgba(211,166,37,.35)}
+.sub{color:#E8C766}
+.card,.q,.lock{background:linear-gradient(180deg,#FFFCF2,#FBF3DE);border:2px solid #E3CF97;border-radius:20px;box-shadow:0 18px 40px -20px rgba(0,0,0,.7),inset 0 0 0 6px rgba(255,255,255,.5)}
+.q{padding:22px;margin:30px 0 0}
+.doc{box-shadow:0 18px 40px -20px rgba(0,0,0,.7)}
+.banner{background:linear-gradient(90deg,#B8860B,#D3A625 50%,#B8860B);color:#2A0E10;box-shadow:0 0 24px rgba(211,166,37,.35)}
+.banner.p1{background:linear-gradient(90deg,#740001,#9E1B1F 50%,#740001);color:#FCEBB6}
+.sparkle{color:#F6DE8D}
+footer{color:#BFAF8E!important}
+/* accueil */
+.scene{position:relative;border-radius:24px;overflow:hidden;border:3px solid #D3A625;box-shadow:0 0 40px rgba(211,166,37,.25);margin:24px 0}
+.scene svg.shop{display:block;width:100%;height:auto}
+.scene .stitle{position:absolute;left:24px;top:18px;right:24px}
+.scene .stitle h1{margin:0;font-family:"Cinzel",Georgia,serif;font-size:2.1rem}
+.scene .stitle p{margin:4px 0 0;color:#F3E6C4;max-width:440px;text-shadow:0 1px 6px #000}
+@media (max-width:640px){.scene .stitle{position:static;padding:16px;background:#1B1235}}
+.choice button{background:linear-gradient(180deg,#2A1440,#4A0F1A);border:3px solid #D3A625;color:#FCEBB6;box-shadow:0 0 0 rgba(211,166,37,0);transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+.choice button:hover,.choice button:focus-visible{transform:translateY(-4px);box-shadow:0 0 28px rgba(211,166,37,.55)}
+.choice b{color:#FCEBB6;font-size:1.4rem}
+.choice span{color:#EADBB5}
+.choice .door{font-size:2.6rem;display:block;margin-bottom:6px}
+/* mascotte */
+.citro{display:flex;align-items:center;gap:14px;margin:22px 0}
+.citro svg{flex:none;width:92px;height:auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.45));animation:bob 3.2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+.bubble{position:relative;background:#FFFCF0;border:3px solid #D3A625;border-radius:20px;padding:12px 18px;color:var(--ink);font-size:1.05rem;box-shadow:0 10px 24px -14px rgba(0,0,0,.6)}
+.bubble::before{content:"";position:absolute;left:-14px;top:50%;margin-top:-10px;border:10px solid transparent;border-right:14px solid #D3A625;border-left:0}
+.bubble b{color:var(--violet)}
+/* potion */
+#potion{position:fixed;right:14px;bottom:14px;z-index:20;display:flex;align-items:center;gap:8px;background:rgba(18,11,36,.88);border:2px solid #D3A625;border-radius:18px;padding:8px 12px 8px 8px;color:#FCEBB6;font-weight:700;font-size:.85rem;box-shadow:0 0 20px rgba(211,166,37,.3)}
+#potion svg{width:40px;height:52px}
+@media (max-width:640px){#potion{padding:6px}#potion .lbl{display:none}#potion svg{width:30px;height:40px}}
+#potion.full{animation:glow 1.4s ease-in-out infinite alternate}
+@keyframes glow{from{box-shadow:0 0 10px rgba(211,166,37,.4)}to{box-shadow:0 0 34px rgba(247,212,23,.95)}}
+#potion .lbl small{display:block;font-weight:400;color:#EADBB5}
+/* étincelles */
+.spark{position:fixed;z-index:50;pointer-events:none;color:#F7D417;text-shadow:0 0 8px #F7C548;animation:spark 1.6s ease-out forwards}
+@keyframes spark{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.4) rotate(160deg)}}
+/* espace prof lisible */
+.prof{background:#FFFCF2;border:2px solid #E3CF97;border-radius:22px;padding:22px;margin-top:22px}
+.prof h1{color:var(--violet);text-shadow:none}
+.prof .sub{color:#9A6B00}
+@media (prefers-reduced-motion:reduce){.star,.candle,.candle::after,.citro svg,#potion.full{animation:none}}
+@media print{.sky,#potion{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky" aria-hidden="true"></div>
+<div id="potion" class="hidden" aria-live="polite"><svg viewBox="0 0 40 52" aria-hidden="true"><defs><clipPath id="flask"><path d="M15 4h10v12l11 22a6 6 0 0 1-5 9H9a6 6 0 0 1-5-9l11-22z"/></clipPath><linearGradient id="liq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF59A"/><stop offset="1" stop-color="#D3A625"/></linearGradient></defs><g clip-path="url(#flask)"><rect x="0" y="0" width="40" height="52" fill="rgba(255,255,255,.12)"/><rect id="liqr" x="0" y="52" width="40" height="52" fill="url(#liq)"/></g><path d="M15 4h10v12l11 22a6 6 0 0 1-5 9H9a6 6 0 0 1-5-9l11-22z" fill="none" stroke="#FCEBB6" stroke-width="2"/><rect x="13" y="1" width="14" height="5" rx="2" fill="#8A5A2B"/></svg><span class="lbl">Potion de réussite<small id="potpct">0 %</small></span></div>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNDAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IkxvZ28gU29yYmV0IENpdHJvbiDigJMgTW9uZGUgbWFnaXF1ZSI+CiAgPGRlZnM+CiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9InNreSIgY3g9IjUwJSIgY3k9IjQwJSIgcj0iNjUlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjM0ExRjVDIi8+PHN0b3Agb2Zmc2V0PSIuNyIgc3RvcC1jb2xvcj0iIzFCMTIzNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzEyMEIyNCIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0ibGVtb24iIGN4PSIzOCUiIGN5PSIzNSUiIHI9IjcwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0ZGRjU5QSIvPjxzdG9wIG9mZnNldD0iLjU1IiBzdG9wLWNvbG9yPSIjRjdENDE3Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRDlBOTAwIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJoYXQiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjOEUyQTNBIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNUEwQjE2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJnb2xkIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y2REU4RCIvPjxzdG9wIG9mZnNldD0iLjUiIHN0b3AtY29sb3I9IiNEM0E2MjUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNBOTdFMTAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8cGF0aCBpZD0iYXJjVG9wIiBkPSJNIDQ3IDIwMCBBIDE1MyAxNTMgMCAwIDEgMzUzIDIwMCIvPgogICAgPHBhdGggaWQ9ImFyY0JvdCIgZD0iTSAyNSAyMDAgQSAxNzUgMTc1IDAgMCAwIDM3NSAyMDAiLz4KICA8L2RlZnM+CgogIDwhLS0gbcOpZGFpbGxvbiAtLT4KICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjE5MiIgZmlsbD0idXJsKCNnb2xkKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjIwMCIgcj0iMTgyIiBmaWxsPSJ1cmwoI3NreSkiLz4KICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjE0NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI2dvbGQpIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjEzOCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRDNBNjI1IiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1kYXNoYXJyYXk9IjIgNiIgb3BhY2l0eT0iLjgiLz4KCiAgPCEtLSDDqXRvaWxlcyAtLT4KICA8ZyBmaWxsPSIjRkNFQkI2Ij4KICAgIDxjaXJjbGUgY3g9IjEyMCIgY3k9IjEzNSIgcj0iMiIvPjxjaXJjbGUgY3g9IjI4NSIgY3k9IjEyOCIgcj0iMi40Ii8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iMjMwIiByPSIxLjYiLz4KICAgIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjI0MCIgcj0iMS44Ii8+PGNpcmNsZSBjeD0iMTUwIiBjeT0iMTA1IiByPSIxLjQiLz48Y2lyY2xlIGN4PSIyNTUiIGN5PSI5NSIgcj0iMS40Ii8+CiAgICA8cGF0aCBkPSJNMjg2IDE3MCBsNCAxMCAxMCA0IC0xMCA0IC00IDEwIC00IC0xMCAtMTAgLTQgMTAgLTR6Ii8+CiAgICA8cGF0aCBkPSJNMTEyIDE4MCBsMyA3IDcgMyAtNyAzIC0zIDcgLTMgLTcgLTcgLTMgNyAtM3oiLz4KICA8L2c+CgogIDwhLS0gY2l0cm9uIC0tPgogIDxnIHRyYW5zZm9ybT0icm90YXRlKC0xMiAyMDAgMjMwKSI+CiAgICA8cGF0aCBkPSJNMTA4IDI0MCBRMTE2IDIzMiAxMjQgMjI2IEMxNDAgMTk2IDE3MiAxODAgMjAwIDE4MCBDMjI4IDE4MCAyNjAgMTk2IDI3NiAyMjYgUTI4NCAyMzIgMjkyIDI0MCBRMjg0IDI0OCAyNzYgMjU0IEMyNjAgMjg0IDIyOCAzMDAgMjAwIDMwMCBDMTcyIDMwMCAxNDAgMjg0IDEyNCAyNTQgUTExNiAyNDggMTA4IDI0MCBaIiBmaWxsPSJ1cmwoI2xlbW9uKSIgc3Ryb2tlPSIjQjg4QTAwIiBzdHJva2Utd2lkdGg9IjMiLz4KICAgIDxwYXRoIGQ9Ik0xNDYgMjE0IEMxNTggMjAwIDE3NCAxOTIgMTkwIDE5MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGQkQwIiBzdHJva2Utd2lkdGg9IjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iLjciLz4KICAgIDxnIGZpbGw9IiNDOTlBMDAiIG9wYWNpdHk9Ii40NSI+PGNpcmNsZSBjeD0iMjMwIiBjeT0iMjE1IiByPSIyIi8+PGNpcmNsZSBjeD0iMjUwIiBjeT0iMjQwIiByPSIyIi8+PGNpcmNsZSBjeD0iMjE1IiBjeT0iMjYyIiByPSIyIi8+PGNpcmNsZSBjeD0iMTcwIiBjeT0iMjU1IiByPSIyIi8+PC9nPgogICAgPCEtLSB2aXNhZ2UgLS0+CiAgICA8Y2lyY2xlIGN4PSIxODAiIGN5PSIyNDAiIHI9IjYiIGZpbGw9IiMzQTI0MTIiLz48Y2lyY2xlIGN4PSIyMjIiIGN5PSIyNDAiIHI9IjYiIGZpbGw9IiMzQTI0MTIiLz4KICAgIDxjaXJjbGUgY3g9IjE4MiIgY3k9IjIzOCIgcj0iMiIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjIyNCIgY3k9IjIzOCIgcj0iMiIgZmlsbD0iI2ZmZiIvPgogICAgPHBhdGggZD0iTTE4NiAyNjAgUTIwMSAyNzQgMjE2IDI2MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM0EyNDEyIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGVsbGlwc2UgY3g9IjE2OCIgY3k9IjI1OCIgcng9IjgiIHJ5PSI1IiBmaWxsPSIjRjI5QzZCIiBvcGFjaXR5PSIuNTUiLz48ZWxsaXBzZSBjeD0iMjM0IiBjeT0iMjU4IiByeD0iOCIgcnk9IjUiIGZpbGw9IiNGMjlDNkIiIG9wYWNpdHk9Ii41NSIvPgogIDwvZz4KCiAgPCEtLSBmZXVpbGxlIC0tPgogIDxnIHRyYW5zZm9ybT0icm90YXRlKC0xMiAyMDAgMjMwKSI+PHBhdGggZD0iTTI3NiAyMjQgQzI5MCAyMDYgMzEyIDIwMiAzMjYgMjEwIEMzMTQgMjI2IDI5NCAyMzIgMjc2IDIyNCBaIiBmaWxsPSIjNUZBODNBIiBzdHJva2U9IiMzQjdBMjIiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik0yODAgMjIzIEMyOTYgMjE2IDMxMCAyMTIgMzIyIDIxMSIgc3Ryb2tlPSIjM0I3QTIyIiBzdHJva2Utd2lkdGg9IjEuNSIgZmlsbD0ibm9uZSIvPjwvZz4KCiAgPCEtLSBjaGFwZWF1IHBvaW50dSAtLT4KICA8ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTIgMjAwIDIzMCkiPgogICAgPGVsbGlwc2UgY3g9IjIwMyIgY3k9IjE3OCIgcng9Ijc4IiByeT0iMTQiIGZpbGw9InVybCgjaGF0KSIgc3Ryb2tlPSIjM0UwNzEwIiBzdHJva2Utd2lkdGg9IjIiLz4KICAgIDxwYXRoIGQ9Ik0xNjAgMTc2IEMxNzUgMTQwIDE4MiAxMTAgMTk2IDg2IEMyMDYgNzAgMjIyIDYyIDI0MCA2NiBDMjI2IDc0IDIyMCA4OCAyMjIgMTA0IEMyMjYgMTMwIDIzOCAxNTYgMjQ4IDE3NiBaIiBmaWxsPSJ1cmwoI2hhdCkiIHN0cm9rZT0iIzNFMDcxMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8cGF0aCBkPSJNMTY2IDE2MiBDMTkwIDE2OCAyMjAgMTY4IDI0NCAxNjIgTDI0OCAxNzYgQzIyMCAxODIgMTg4IDE4MiAxNjAgMTc2IFoiIGZpbGw9InVybCgjZ29sZCkiLz4KICAgIDxwYXRoIGQ9Ik0yMDUgMTIwIGwzIDcgNyAzIC03IDMgLTMgNyAtMyAtNyAtNyAtMyA3IC0zeiIgZmlsbD0iI0ZDRUJCNiIvPgogICAgPGNpcmNsZSBjeD0iMTkwIiBjeT0iMTQwIiByPSIyIiBmaWxsPSIjRkNFQkI2Ii8+PGNpcmNsZSBjeD0iMjIyIiBjeT0iMTQwIiByPSIxLjYiIGZpbGw9IiNGQ0VCQjYiLz4KICA8L2c+CgogIDwhLS0gdGV4dGVzIC0tPgogIDx0ZXh0IGZvbnQtZmFtaWx5PSJDaW56ZWwsICdUcmFqYW4gUHJvJywgR2VvcmdpYSwgc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZvbnQtc2l6ZT0iMjgiIGxldHRlci1zcGFjaW5nPSI1IiBmaWxsPSJ1cmwoI2dvbGQpIj4KICAgIDx0ZXh0UGF0aCBocmVmPSIjYXJjVG9wIiBzdGFydE9mZnNldD0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5TT1JCRVQgQ0lUUk9OPC90ZXh0UGF0aD4KICA8L3RleHQ+CiAgPHRleHQgZm9udC1mYW1pbHk9IkNpbnplbCwgJ1RyYWphbiBQcm8nLCBHZW9yZ2lhLCBzZXJpZiIgZm9udC13ZWlnaHQ9IjcwMCIgZm9udC1zaXplPSIxOCIgbGV0dGVyLXNwYWNpbmc9IjQiIGZpbGw9IiNGQ0VCQjYiPgogICAgPHRleHRQYXRoIGhyZWY9IiNhcmNCb3QiIHN0YXJ0T2Zmc2V0PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKcpiBNT05ERSBNQUdJUVVFIOKcpjwvdGV4dFBhdGg+CiAgPC90ZXh0Pgo8L3N2Zz4K" alt="Logo Sorbet Citron – Monde magique"><span class="brandname">Sorbet Citron</span><span class="brandsub">Monde magique</span></div>
+    <nav class="nav" id="nav">
+      <button data-go="home" class="on">Accueil</button>
+      <button data-go="eval1">Évaluation 1</button>
+      <button data-go="eval2">Évaluation 2</button>
+      <button data-go="prof">🔒 Professeur</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="app"></main>
+<footer class="wrap" style="color:var(--muted);font-size:.8rem;padding-bottom:30px">Scénario pédagogique inspiré du magasin Sorbet Citron (Nancy), transposé à Paris La Défense. Les personnes, le fournisseur, les commandes et les chiffres sont fictifs. Les noms de l'univers Harry Potter appartiennent à leurs ayants droit. · TCAP EPC · Mme GOLDSCHMIDT</footer>
+
+<script>
+/* =========================================================
+   RÉGLAGES DE L'ENSEIGNANTE (modifiables)
+   ========================================================= */
+const CODE_EVAL2 = "GRIMOIRE";   // code donné aux élèves le jour de l'évaluation 2
+const CODE_PROF  = "LUMOS78";   // code de l'espace professeur
+
+/* ========================================================= */
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const LS = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fr = n => (Math.round(n*100)/100).toString().replace('.', ',');
+const norm = s => String(s ?? '').trim().toLowerCase();
+
+let ident = LS.get('sorbethp_ident', {nom:'', prenom:'', classe:''});
+let unlocked2 = sessionStorage.getItem('sorbethp_u2') === '1';
+let profOk = sessionStorage.getItem('sorbethp_prof') === '1';
+
+/* ---------------- DONNÉES ---------------- */
+const BC = [
+  ['SC101','Dragées surprises de Bertie Crochue – boîte 34 g','36'],
+  ['SC205','Cupcakes « Poudlard » – boîte de 4 (produit frais)','20'],
+  ['SD310','Lampe « Vif d\'or » LED 30 cm','10'],
+  ['SD315','Guirlande « Bougies flottantes » 5 m','30'],
+  ['ST420','Robe de sorcier Gryffondor enfant – taille 6-8 ans','12'],
+  ['ST425','Écharpe Serdaigle adulte','25'],
+  ['SJ530','Baguette d\'Hermione – boîte collector','15'],
+  ['SD340','Chopes en verre « Bièraubeurre » – lot de 6','16'],
+];
+const BL = [
+  ['SC101','Dragées surprises Bertie Crochue 34 g','36','DDM 31/03/2027'],
+  ['SC205','Cupcakes Poudlard x4','20','DLC 21/10/2026'],
+  ['SD310','Lampe « Vif d\'or » LED 30 cm','10',''],
+  ['SD315','Guirlande « Bougies flottantes » 5 m','30',''],
+  ['ST421','Robe de sorcier Gryffondor enfant – taille 2-4 ans','12',''],
+  ['ST425','Écharpe Serdaigle adulte','25',''],
+  ['SJ530','Baguette d\'Hermione – boîte collector','20',''],
+  ['SD340','Chopes « Bièraubeurre » x6','16','Fragile'],
+];
+const CPT = [
+  ['SC101','36','Cartons en bon état.'],
+  ['SC205','20','Boîtes en bon état, livrées dans le camion frigorifique (3 °C).'],
+  ['SD310','10','RAS.'],
+  ['SD315','24','Il manque un carton de 6 guirlandes.'],
+  ['ST421','12','Étiquettes « 2-4 ans ».'],
+  ['ST425','25','RAS.'],
+  ['SJ530','20','RAS.'],
+  ['SD340','16','3 lots écrasés : chopes cassées à l\'intérieur.'],
+];
+const VOC = [
+  ['Bon de commande','c'],['Bon de livraison','d'],['Réserve','a'],['Anomalie','h'],
+  ['DLC','b'],['DDM','e'],['Litige','f'],['Fiche de stock','g'],
+];
+const DEFS = [
+  ['a','Remarque écrite sur le bon de livraison, avant de signer, pour signaler une anomalie.'],
+  ['b','Date après laquelle un produit frais ne peut plus être vendu.'],
+  ['c','Document envoyé par le magasin au fournisseur pour demander des produits.'],
+  ['d','Document remis par le livreur qui liste les produits livrés.'],
+  ['e','Date après laquelle le produit perd des qualités mais n\'est pas dangereux.'],
+  ['f','Désaccord avec le fournisseur à la suite d\'une anomalie.'],
+  ['g','Document qui suit les entrées, les sorties et la quantité en stock d\'un produit.'],
+  ['h','Écart entre ce qui était prévu et ce qui est livré (quantité, référence, état, date).'],
+];
+const CTRL = [ // ref, cmd, bl, qté conforme attendue, anomalie, laquelle, action
+  ['SC101','36','36',36,'non','Conforme','Accepter les 36 boîtes'],
+  ['SC205','20','20',0,'oui','DLC 21/10 trop courte (2 jours au lieu de 10 minimum, avant l\'opération du 24/10)','Refuser les 20 boîtes + réserve'],
+  ['SD310','10','10',10,'non','Conforme','Accepter les 10 lampes'],
+  ['SD315','30','30',24,'oui','Manque 6 guirlandes (24 comptées / 30 sur le BL)','Accepter 24 + réserve pour 6 manquantes'],
+  ['ST420 / ST421','12','12',0,'oui','Mauvaise référence et mauvaise taille (ST421 2-4 ans au lieu de ST420 6-8 ans)','Refuser les 12 robes + réserve'],
+  ['ST425','25','25',25,'non','Conforme','Accepter les 25 écharpes'],
+  ['SJ530','15','20',15,'oui','20 livrés pour 15 commandés (5 en trop)','Accepter 15, refuser les 5 en trop'],
+  ['SD340','16','16',13,'oui','3 lots écrasés, chopes cassées','Accepter 13, refuser les 3 lots abîmés'],
+];
+const FS = [ // produit, stock avant, entrée, après
+  ['SC101 – Dragées surprises Bertie Crochue',8,36,44],
+  ['SC205 – Cupcakes Poudlard',0,0,0],
+  ['SD315 – Guirlande « Bougies flottantes » 5 m',4,24,28],
+  ['ST420 – Robe Gryffondor 6-8 ans',3,0,3],
+  ['SJ530 – Baguette d\'Hermione',2,15,17],
+  ['SD340 – Chopes en verre Bièraubeurre',5,13,18],
+];
+const RESERVES = [
+  ['SC205',['sc205','cupcake','poudlard'],'20 boîtes de cupcakes refusées – DLC 21/10/2026 non conforme (10 jours minimum).'],
+  ['SD315',['sd315','guirlande','bougie'],'24 guirlandes reçues sur 30 facturées – 1 carton de 6 manquant.'],
+  ['ST421',['st421','st420','robe'],'12 robes Gryffondor 2-4 ans refusées – erreur de référence et de taille.'],
+  ['SJ530',['sj530','baguette','hermione'],'20 baguettes livrées pour 15 commandés – 5 refusés.'],
+  ['SD340',['sd340','chope','bièraubeurre','bieraubeurre'],'3 lots de chopes écrasés, chopes cassées – refusés.'],
+];
+const BILAN = [
+  ['SC101 – Dragées surprises de Bertie Crochue (DDM 31/03/2027)','36','36','Conforme'],
+  ['SC205 – Cupcakes « Poudlard » x4','20','0','Refusés : DLC trop courte'],
+  ['SD310 – Lampe « Vif d\'or » LED 30 cm','10','10','Conforme'],
+  ['SD315 – Guirlande « Bougies flottantes » 5 m','30','24','6 manquantes'],
+  ['ST421 – Robe de sorcier Gryffondor enfant 2-4 ans','12','0','Refusés : erreur de taille'],
+  ['ST425 – Écharpe Serdaigle adulte','25','25','Conforme'],
+  ['SJ530 – Baguette d\'Hermione','20','15','5 en trop refusés'],
+  ['SD340 – Chopes en verre « Bièraubeurre » x6','16','13','3 lots cassés refusés'],
+];
+const ZONES = [['A','Confiserie / friandises magiques'],['B','Froid positif (0 à 4 °C)'],['C','Décoration et objets (lampes, chopes)'],['D','Textiles (robes, écharpes, capes)'],['E','Baguettes et objets de collection'],['F','Produits d\'entretien (local fermé)'],['G','Zone déchets / tri']];
+const RONDE = [
+  'Étagère haute de la zone A : 4 packs de boisson « Bièraubeurre » (6 bouteilles de 75 cl, environ 8 kg chacun).',
+  'Étagère du milieu de la zone A : Dragées surprises – le lot DDM 31/03/2027 est devant, le lot DDM 31/12/2026 est derrière.',
+  'Étagère basse de la zone A : boîtes de Chocogrenouilles rangés par référence, étiquettes visibles.',
+  'Zone B (meuble réfrigéré) : tartes à la citrouille, porte fermée, thermomètre à 3 °C.',
+  'Quai de réception : 1 carton de crèmes desserts « Bave de troll » posé au sol depuis 6 h 30. Il est 8 h.',
+  'Zone C : lots de chopes en verre « Bièraubeurre » posés sur l\'étagère du haut, au bord de la tablette.',
+  'Allée centrale : le transpalette est rangé contre le mur, à son emplacement marqué au sol.',
+  'Issue de secours : 5 cartons de guirlandes empilés devant la porte.',
+  'Bouteilles d\'eau de Javel rangées sur l\'étagère juste au-dessus des bonbons (zone A).',
+  'Zone déchets : cartons pliés dans la benne « carton », films plastiques dans le bac « plastique ».',
+];
+const RONDE_ERR = [1,2,5,6,8,9];
+const RONDE_ANS = {
+  1:['Produits lourds trop haut','Sécurité / manutention : charges lourdes en bas','Descendre les packs sur l\'étagère basse'],
+  2:['Lot le plus ancien derrière','FEFO : le premier qui périme sort en premier','Mettre le lot DDM 31/12/2026 devant'],
+  5:['Produit frais au sol, hors froid depuis 1 h 30','Chaîne du froid (+ hygiène : pas au sol)','Ranger tout de suite en zone B, vérifier l\'état'],
+  6:['Produits fragiles en hauteur, au bord','Sécurité / produits fragiles : en bas, stables','Ranger les chopes sur l\'étagère basse, au fond'],
+  8:['Issue de secours encombrée','Sécurité : issues de secours toujours libres','Déplacer les cartons en zone C'],
+  9:['Produits d\'entretien au-dessus d\'alimentaire','Hygiène / séparation des familles de produits','Ranger la Javel en zone F (local fermé)'],
+};
+const RANGE = [ // produit, zone attendue, emplacement attendu, pourquoi
+  ['Dragées surprises (DDM 31/03/2027)','A','Milieu, derrière les lots plus anciens','Confiserie ; FEFO : DDM la plus lointaine'],
+  ['Cupcakes Poudlard','X','Ne se rangent pas','Refusés à la livraison (0 entré en stock)'],
+  ['Guirlandes lumineuses (légères)','C','Haut','Déco ; produits légers en hauteur'],
+  ['Baguettes d\'Hermione','E','Milieu','Famille baguettes et objets de collection'],
+  ['Chopes en verre Bièraubeurre','C','Bas, dans les cartons d\'origine','Fragile : en bas pour éviter les chutes'],
+  ['Robes Gryffondor enfant 6-8 ans','X','Aucun à ranger','Pas reçus : les 2-4 ans ont été refusés'],
+];
+
+/* ---------------- HELPERS RENDU ---------------- */
+const table = (head, rows, centers=[]) => `<div class="tw"><table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${centers.includes(i)?'c':''}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+const doc = (n, title, sub, body, meta='') => `<section class="doc"><div><span class="tag">Document ${n}</span><span class="title">${title}</span> ${sub?`<i class="meta">${sub}</i>`:''}</div>${meta?`<div class="meta">${meta}</div>`:''}${body}</section>`;
+const qh = (n, txt, pts) => `<div class="qh"><span class="n">Question ${n} —</span> ${txt} <span class="pts">(… / ${pts} pts)</span></div>`;
+const inp = (k, type='text', extra='') => `<input type="${type}" data-k="${k}" ${type==='number'?'inputmode="numeric" min="0"':''} ${extra} aria-label="${k}">`;
+const sel = (k, opts) => `<select data-k="${k}" aria-label="${k}"><option value="">…</option>${opts.map(o=>Array.isArray(o)?`<option value="${o[0]}">${o[1]}</option>`:`<option>${o}</option>`).join('')}</select>`;
+const ta = (k, rows=4, ph='') => `<textarea data-k="${k}" rows="${rows}" placeholder="${ph}" aria-label="${k}"></textarea>`;
+const radio = (k, opts) => `<div class="radio-row">${opts.map(o=>`<label><input type="radio" name="${k}" data-k="${k}" value="${o}"> ${o}</label>`).join('')}</div>`;
+
+function identBlock(){
+  return `<div class="card"><h2>👤 Qui es-tu ?</h2>
+    <div class="grid2">
+      <div><label class="f" for="i-nom">Nom</label><input type="text" id="i-nom" value="${esc(ident.nom)}"></div>
+      <div><label class="f" for="i-prenom">Prénom</label><input type="text" id="i-prenom" value="${esc(ident.prenom)}"></div>
+      <div><label class="f" for="i-classe">Classe</label><input type="text" id="i-classe" value="${esc(ident.classe)}"></div>
+    </div></div>`;
+}
+function bindIdent(){
+  ['nom','prenom','classe'].forEach(f=>{ const el=$('#i-'+f); if(el) el.addEventListener('input',()=>{ ident[f]=el.value; LS.set('sorbethp_ident',ident); }); });
+}
+const MASCOT = `<svg viewBox="95 52 240 262" aria-hidden="true"><defs><radialGradient id="mL" cx="38%" cy="35%" r="70%"><stop offset="0" stop-color="#FFF59A"/><stop offset=".55" stop-color="#F7D417"/><stop offset="1" stop-color="#D9A900"/></radialGradient><linearGradient id="mH" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8E2A3A"/><stop offset="1" stop-color="#5A0B16"/></linearGradient><linearGradient id="mG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6DE8D"/><stop offset=".5" stop-color="#D3A625"/><stop offset="1" stop-color="#A97E10"/></linearGradient></defs><g transform="rotate(-12 200 230)"><path d="M108 240 Q116 232 124 226 C140 196 172 180 200 180 C228 180 260 196 276 226 Q284 232 292 240 Q284 248 276 254 C260 284 228 300 200 300 C172 300 140 284 124 254 Q116 248 108 240 Z" fill="url(#mL)" stroke="#B88A00" stroke-width="3"/><path d="M146 214 C158 200 174 192 190 190" fill="none" stroke="#FFFBD0" stroke-width="7" stroke-linecap="round" opacity=".7"/><circle cx="180" cy="240" r="7" fill="#3A2412"/><circle cx="222" cy="240" r="7" fill="#3A2412"/><circle cx="182" cy="237" r="2.4" fill="#fff"/><circle cx="224" cy="237" r="2.4" fill="#fff"/><path d="M186 260 Q201 276 216 260" fill="none" stroke="#3A2412" stroke-width="4" stroke-linecap="round"/><ellipse cx="166" cy="258" rx="9" ry="5" fill="#F29C6B" opacity=".55"/><ellipse cx="236" cy="258" rx="9" ry="5" fill="#F29C6B" opacity=".55"/><path d="M276 224 C290 206 312 202 326 210 C314 226 294 232 276 224 Z" fill="#5FA83A" stroke="#3B7A22" stroke-width="2"/><ellipse cx="203" cy="178" rx="78" ry="14" fill="url(#mH)" stroke="#3E0710" stroke-width="2"/><path d="M160 176 C175 140 182 110 196 86 C206 70 222 62 240 66 C226 74 220 88 222 104 C226 130 238 156 248 176 Z" fill="url(#mH)" stroke="#3E0710" stroke-width="2"/><path d="M166 162 C190 168 220 168 244 162 L248 176 C220 182 188 182 160 176 Z" fill="url(#mG)"/><path d="M205 120 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#FCEBB6"/></g><path d="M282 300 L322 262" stroke="#8A5A2B" stroke-width="6" stroke-linecap="round"/><g fill="#FCEBB6"><circle cx="328" cy="256" r="3"/><circle cx="318" cy="248" r="2"/><circle cx="332" cy="268" r="1.6"/></g></svg>`;
+const citro = (t) => `<div class="citro">${MASCOT}<div class="bubble">${t}</div></div>`;
+const situation = (txt) => `<div class="card"><h2>📜 Mise en situation</h2>
+  <p>Tu es équipier(ère) polyvalent(e) chez <b>Sorbet Citron</b>, une boutique de Paris La Défense, spécialisée dans l'univers <b>Harry Potter</b> : robes, écharpes, baguettes, objets de collection et friandises magiques. Elle vend en boutique et en ligne. Samedi <b>24 octobre 2026</b>, la boutique lance son <b>opération Halloween</b>, le plus gros temps fort de l'année.</p><p>${txt}</p>
+  <div class="note v"><b>Consignes :</b> lis <b>tous</b> les documents avant de répondre. Utilise le vocabulaire professionnel. Ton travail s'enregistre tout seul sur cet ordinateur.</div></div>`;
+
+function finBlock(n, checks){
+  return `${citro('Tu y es presque ! Remplis ta <b>potion de réussite</b> jusqu\'en haut, vérifie ton travail, puis rends-le.')}<div class="card fin"><h2>✅ Je vérifie avant de rendre mon travail</h2>
+   ${checks.map((c,i)=>`<label class="check"><input type="checkbox" data-k="chk_${i}"> <span>${c}</span></label>`).join('')}
+   <p>Quand tu as fini, clique sur le bouton. Un fichier se télécharge : dépose-le dans le <b>Digipad</b>, dans le dossier à ton nom.</p>
+   <div class="row"><button class="btn" id="send">📤 J'ai fini : télécharger mon travail</button><span class="saved" id="savedmsg"></span></div>
+   <p id="identerr" class="err hidden">Écris ton nom et ton prénom en haut de la page avant de télécharger.</p></div>`;
+}
+
+/* ---------------- ÉVALUATION 1 ---------------- */
+function renderEval1(){
+  const opts = DEFS.map(d=>d[0]);
+  return `<h1>Évaluation 1 — Je réceptionne la livraison</h1>
+  <p class="sub">Compétence B1.2 · Réceptionner les produits · 11 points · 50 min</p>
+  ${citro('Bonjour ! Je suis <b>Citro</b>, l\'apprenti sorcier de Sorbet Citron. Aujourd\'hui, une grosse livraison arrive pour Halloween. Je compte sur toi pour la contrôler comme un vrai pro !')}
+  ${identBlock()}
+  ${situation('<b>Lundi 19 octobre 2026, 8 h 15.</b> Le camion du fournisseur <b>Sortilège Distribution (Cergy)</b> arrive. Ton collègue Lucas a déjà compté les colis sur le quai. Mme Bertrand, la responsable de la boutique, te confie la réception de la livraison.')}
+  <div class="banner p1"><span>📦 Les documents</span><span>À lire en entier</span></div>
+  ${doc(1,'BON DE COMMANDE N° BC-2026-1005','envoyé le 05/10/2026', table(['Réf.','Désignation','Qté commandée'], BC,[0,2]) + `<p><i>Condition de commande : pour les produits frais, <b>DLC minimale exigée à la livraison : 10 jours</b>.</i></p>`)}
+  ${doc(2,'BON DE LIVRAISON N° BL-SD-4452','du 19/10/2026', table(['Réf.','Désignation','Qté livrée','Remarque fournisseur'], BL,[0,2]), 'Fournisseur : Sortilège Distribution – Cergy · Client : Sorbet Citron – Paris La Défense · Transporteur : SeineExpress · 11 colis')}
+  ${doc(3,'FICHE DE COMPTAGE DE LUCAS','quai de réception', table(['Réf.','Qté comptée','Observations de Lucas'], CPT,[0,1]))}
+  <div class="note"><b>Décision de Mme Bertrand :</b> les produits non conformes sont <b>refusés</b> et repartent avec le chauffeur. Seuls les produits <b>conformes</b> entrent en stock.</div>
+
+  <div class="sparkle">✦ ✧ ✦</div>${citro('Tu as bien lu tous les documents ? Alors <b>à toi de jouer</b> ! Prends ton temps, compare ligne par ligne.')}<div class="banner"><span>✏️ Les questions</span><span>… / 11 pts</span></div>
+  <section class="q">${qh(1,'Je connais les mots du pro. Choisis la bonne lettre pour chaque mot.',2)}
+    ${table(['Lettre','Définition'], DEFS.map(d=>[`<b>${d[0]}</b>`, d[1]]),[0])}
+    <div style="height:14px"></div>
+    ${table(['Mot','Ma lettre'], VOC.map((v,i)=>[v[0], sel('q1_'+i, opts)]),[1])}
+  </section>
+
+  <section class="q">${qh(2,'Je contrôle. Compare les documents 1, 2 et 3, puis complète le tableau.',4)}
+    ${table(['Réf.','Qté commandée','Qté sur le BL','Qté reçue conforme','Anomalie ?','Laquelle ?','Ce que je fais'],
+      CTRL.map((r,i)=>[`<b>${r[0]}</b>`, r[1], r[2], inp('q2_qty_'+i,'number'), sel('q2_ano_'+i,[['oui','Oui'],['non','Non']]), ta('q2_lq_'+i,2), ta('q2_act_'+i,2)]),[0,1,2])}
+    <p class="row"><b>Nombre total d'anomalies repérées :</b> <span style="width:110px">${inp('q2_total','number')}</span></p>
+  </section>
+
+  <section class="q">${qh(3,'Je signale. Écris les réserves que tu notes sur le bon de livraison avant de le signer (une ligne par anomalie).',2)}
+    ${ta('q3_text',7,'Exemple : Réf. … : …')}
+  </section>
+
+  <section class="q">${qh(4,'Je mets à jour la fiche de stock. N\'oublie pas la décision de Mme Bertrand !',3)}
+    ${table(['Produit','Stock avant livraison','Quantité qui entre en stock','Stock après livraison'],
+      FS.map((r,i)=>[r[0], r[1], inp('q4_in_'+i,'number'), inp('q4_after_'+i,'number')]),[1])}
+  </section>
+
+  ${finBlock(1,['J\'ai comparé les 3 documents ligne par ligne (quantités, références, tailles, dates, état).','J\'ai écrit une réserve pour chaque anomalie.','Je n\'ai ajouté au stock que les produits conformes.'])}`;
+}
+
+/* ---------------- ÉVALUATION 2 ---------------- */
+function renderEval2(){
+  if(!unlocked2) return `<div class="card lock"><h2>🔐 Évaluation 2</h2><p>Ton enseignante te donnera le code le jour de l'évaluation.</p>
+    <label class="f" for="c2">Code</label><input type="text" id="c2" autocomplete="off"><p class="err hidden" id="c2err">Ce n'est pas le bon code.</p>
+    <p><button class="btn" id="c2ok">Ouvrir</button></p></div>`;
+  return `<h1>Évaluation 2 — Je range et j'organise la réserve</h1>
+  <p class="sub">Compétence B1.3 · Stocker les produits · 9 points · 45 min</p>
+  ${citro('Re-bonjour ! Cette nuit, un drôle de sortilège a semé le désordre dans la réserve. Aide-moi à repérer les erreurs et à tout ranger avant l\'ouverture !')}
+  ${identBlock()}
+  ${situation('Lundi 19 octobre, tu as réceptionné la livraison de <b>Sortilège Distribution</b>. Les produits non conformes ont été refusés. <b>Mardi 20 octobre, 7 h 45.</b> Avant de ranger la livraison d\'hier, tu fais une ronde dans la réserve. Mme Bertrand te dit : « Repère ce qui ne va pas, explique pourquoi, puis range la livraison correctement. »')}
+  <div class="banner p1"><span>📦 Les documents</span><span>À lire en entier</span></div>
+  ${doc(1,'BILAN DE LA RÉCEPTION DU 19/10/2026','BL n° BL-SD-4452', table(['Produit','Qté livrée','Qté entrée en stock','Remarque'], BILAN,[1,2]))}
+  ${doc(2,'PLAN DE LA RÉSERVE','', table(['Zone','Familles de produits'], ZONES.map(z=>[`<b>${z[0]}</b>`,z[1]]).concat([['—','Allée centrale et issue de secours : à laisser libres']]),[0]))}
+  ${doc(3,'RAPPORT DE LA RONDE DU MATIN','', table(['N°','Ce que tu observes'], RONDE.map((r,i)=>[`<b>${i+1}</b>`, r]),[0]))}
+  <div class="note"><b>Attention :</b> tout n'est pas faux dans ce rapport ! Certaines observations sont <b>correctes</b>.</div>
+
+  <div class="sparkle">✦ ✧ ✦</div>${citro('Les documents sont lus ? Parfait ! Attention : certaines observations sont <b>justes</b>, ne te laisse pas piéger.')}<div class="banner"><span>✏️ Les questions</span><span>… / 9 pts</span></div>
+  <section class="q">${qh(1,'Je repère les erreurs. a) Pour chaque observation, choisis « Correct » ou « Erreur ».','2,5')}
+    ${table(['N°','Observation','Mon choix'], RONDE.map((r,i)=>[`<b>${i+1}</b>`, r, radio('e2q1_'+i,['Correct','Erreur'])]),[0])}
+    <p style="margin-top:22px"><b>b)</b> Pour chaque <b>erreur</b>, nomme la règle professionnelle non respectée et propose une correction. <span class="pts" style="color:var(--violet);font-weight:700">(… / 3 pts)</span></p>
+    ${table(['N°','Erreur constatée','Règle non respectée','Ma correction'],
+      Array.from({length:6},(_,i)=>[sel('q1b_n_'+i, Array.from({length:10},(_,j)=>String(j+1))), ta('q1b_err_'+i,2), ta('q1b_regle_'+i,2), ta('q1b_corr_'+i,2)]),[0])}
+  </section>
+
+  <section class="q">${qh(2,'J\'applique la bonne règle de rotation.',1)}
+    <p>Dans la zone A, il reste 3 lots de Dragées surprises. Donne à chaque lot un numéro de <b>1</b> (placé devant, vendu en premier) à <b>3</b> (placé derrière).</p>
+    ${table(['Lot A – DDM 31/03/2027','Lot B – DDM 31/12/2026','Lot C – DDM 28/02/2027'], [[sel('q2_A',['1','2','3']), sel('q2_B',['1','2','3']), sel('q2_C',['1','2','3'])]],[0,1,2])}
+    <p><b>Cette règle s'appelle :</b></p>${radio('q2_regle',['FIFO','FEFO','LIFO'])}
+  </section>
+
+  <section class="q">${qh(3,'Je range la livraison d\'hier. Aide-toi du document 1 et du plan de la réserve.','1,5')}
+    <p><i>Si un produit ne doit pas être rangé, choisis « Ne se range pas » et explique pourquoi.</i></p>
+    ${table(['Produit reçu','Zone','Emplacement (haut / milieu / bas, devant / derrière)','Pourquoi ?'],
+      RANGE.map((r,i)=>[r[0], sel('q3_zone_'+i, ZONES.map(z=>[z[0],z[0]]).concat([['X','Ne se range pas']])), ta('q3_empl_'+i,2), ta('q3_why_'+i,2)]))}
+  </section>
+
+  <section class="q">${qh(4,'Situation professionnelle.',1)}
+    <p>Un nouveau saisonnier te dit : « Pourquoi on ne pose pas les nouvelles boîtes de Dragées surprises devant ? Ce serait plus rapide ! » Explique-lui la règle avec les mots du pro.</p>
+    ${ta('q4_text',5)}
+  </section>
+
+  ${finBlock(2,['J\'ai lu les 10 observations et distingué les correctes des erreurs.','Pour chaque erreur, j\'ai nommé la règle et proposé une correction.','J\'ai rangé seulement les produits réellement entrés en stock et j\'ai justifié.'])}`;
+}
+
+/* ---------------- SAUVEGARDE ÉLÈVE ---------------- */
+function bindAnswers(n){
+  const key = 'sorbethp_eval'+n;
+  const ans = LS.get(key, {});
+  app.querySelectorAll('[data-k]').forEach(el=>{
+    const k = el.dataset.k, v = ans[k];
+    if(el.type==='radio') el.checked = (v===el.value);
+    else if(el.type==='checkbox') el.checked = !!v;
+    else if(v!==undefined) el.value = v;
+    const ev = (el.tagName==='SELECT'||el.type==='radio'||el.type==='checkbox') ? 'change' : 'input';
+    el.addEventListener(ev, ()=>{
+      if(el.type==='radio'){ if(el.checked) ans[k]=el.value; }
+      else if(el.type==='checkbox') ans[k]=el.checked;
+      else ans[k]=el.value;
+      LS.set(key, ans); updatePotion(n);
+      const m=$('#savedmsg'); if(m){ m.textContent='💾 Enregistré'; clearTimeout(m._t); m._t=setTimeout(()=>m.textContent='',1500); }
+    });
+  });
+  const b = $('#send');
+  if(b) b.onclick = ()=>{
+    if(!ident.nom.trim() || !ident.prenom.trim()){ $('#identerr').classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'}); return; }
+    $('#identerr').classList.add('hidden');
+    const data = {app:'sorbet-citron-hp', eval:n, nom:ident.nom.trim(), prenom:ident.prenom.trim(), classe:ident.classe.trim(), date:new Date().toISOString(), answers:LS.get(key,{})};
+    const name = `Eval${n}_${data.nom}_${data.prenom}`.replace(/[^\wÀ-ÿ-]+/g,'_') + '.json';
+    const blob = new Blob([JSON.stringify(data,null,1)],{type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+    $('#savedmsg').textContent = '✅ Bravo ! Fichier téléchargé : ' + name; sparkles();
+  };
+}
+
+/* ---------------- CORRECTION AUTOMATIQUE ---------------- */
+const num = v => (v===undefined||v===''||v===null) ? null : Number(String(v).replace(',','.'));
+const P = (ok)=> ok===null ? '<span class="pill na">vide</span>' : ok ? '<span class="pill ok">juste</span>' : '<span class="pill ko">faux</span>';
+const cellRes = (stu, ok) => `<td class="${ok===null?'':ok?'ok':'ko'}">${esc(stu ?? '') || '<i>—</i>'}</td>`;
+
+function grade1(a){
+  const Q = [];
+  // Q1
+  let s=0, rows='';
+  VOC.forEach((v,i)=>{ const st=a['q1_'+i]; const ok = st ? st===v[1] : null; if(ok) s+=0.25; rows+=`<tr><td>${v[0]}</td>${cellRes(st,ok)}<td class="expect">${v[1]}</td></tr>`; });
+  Q.push({id:'q1',t:'Q1 · Vocabulaire',max:2,auto:s,full:true,html:`<table><tr><th>Mot</th><th>Élève</th><th>Attendu</th></tr>${rows}</table><p class="auto">0,25 pt par bonne lettre (calcul automatique).</p>`});
+  // Q2
+  s=0; rows='';
+  CTRL.forEach((r,i)=>{
+    const q=num(a['q2_qty_'+i]), an=a['q2_ano_'+i];
+    const okq = q===null?null:q===r[3], oka = an?an===r[4]:null;
+    let p=0; if(okq) p+=0.25; if(oka) p+=0.25; s+=p;
+    rows+=`<tr><td><b>${r[0]}</b></td>${cellRes(a['q2_qty_'+i],okq)}<td class="expect">${r[3]}</td>${cellRes(an,oka)}<td class="expect">${r[4]}</td><td class="stu">${esc(a['q2_lq_'+i])}<div class="expect">→ ${r[5]}</div></td><td class="stu">${esc(a['q2_act_'+i])}<div class="expect">→ ${r[6]}</div></td></tr>`;
+  });
+  const tot=num(a['q2_total']);
+  Q.push({id:'q2',t:'Q2 · Tableau de contrôle',max:4,auto:s,html:`<div class="tw"><table><tr><th>Réf.</th><th>Qté élève</th><th>Att.</th><th>Anomalie élève</th><th>Att.</th><th>Laquelle (élève → attendu)</th><th>Action (élève → attendu)</th></tr>${rows}</table></div>
+    <p>Nombre total d'anomalies : <b>${tot??'—'}</b> ${P(tot===null?null:tot===5)} <span class="expect">(attendu : 5)</span></p>
+    <p class="auto">Proposition automatique : 0,25 pt si la quantité est juste + 0,25 pt si « anomalie oui/non » est juste. Vérifie les colonnes « Laquelle » et « Action » et ajuste la note.</p>`});
+  // Q3
+  const txt = norm(a['q3_text']); s=0; rows='';
+  RESERVES.forEach(r=>{ const found = r[1].some(k=>txt.includes(k)); if(found) s+=0.4; rows+=`<tr><td><b>${r[0]}</b></td><td>${found?'<span class="pill ok">mentionné</span>':'<span class="pill ko">absent</span>'}</td><td class="expect">${r[2]}</td></tr>`; });
+  Q.push({id:'q3',t:'Q3 · Réserves',max:2,auto:s,html:`<div class="stu" style="border:1.5px solid var(--line);border-radius:10px;padding:10px;background:#FFFDF6">${esc(a['q3_text'])||'<i>Pas de réponse</i>'}</div>
+    <table style="margin-top:8px"><tr><th>Réserve</th><th>Détection</th><th>Réserve attendue</th></tr>${rows}</table>
+    <p class="auto">Proposition automatique : 0,4 pt par produit concerné cité. Vérifie que chaque réserve est précise (référence + quantité + anomalie).</p>`});
+  // Q4
+  s=0; rows='';
+  FS.forEach((r,i)=>{ const e=num(a['q4_in_'+i]), f=num(a['q4_after_'+i]); const oke=e===null?null:e===r[2], okf=f===null?null:f===r[3]; if(oke) s+=0.25; if(okf) s+=0.25;
+    rows+=`<tr><td>${r[0]}</td><td class="c">${r[1]}</td>${cellRes(a['q4_in_'+i],oke)}<td class="expect">${r[2]}</td>${cellRes(a['q4_after_'+i],okf)}<td class="expect">${r[3]}</td></tr>`; });
+  Q.push({id:'q4',t:'Q4 · Fiche de stock',max:3,auto:s,full:true,html:`<table><tr><th>Produit</th><th>Avant</th><th>Entrée élève</th><th>Att.</th><th>Après élève</th><th>Att.</th></tr>${rows}</table><p class="auto">0,25 pt par case juste (calcul automatique).</p>`});
+  return Q;
+}
+
+function grade2(a){
+  const Q = [];
+  // Q1a
+  let s=0, rows='';
+  RONDE.forEach((r,i)=>{ const exp = RONDE_ERR.includes(i+1)?'Erreur':'Correct'; const st=a['e2q1_'+i]; const ok= st?st===exp:null; if(ok) s+=0.25;
+    rows+=`<tr><td class="c"><b>${i+1}</b></td><td>${esc(r)}</td>${cellRes(st,ok)}<td class="expect">${exp}</td></tr>`; });
+  Q.push({id:'q1a',t:'Q1 a · Correct ou erreur',max:2.5,auto:s,full:true,html:`<table><tr><th>N°</th><th>Observation</th><th>Élève</th><th>Attendu</th></tr>${rows}</table><p class="auto">0,25 pt par bonne réponse (calcul automatique).</p>`});
+  // Q1b
+  s=0; rows=''; const seen=new Set();
+  for(let i=0;i<6;i++){
+    const n=a['q1b_n_'+i]; const err=a['q1b_err_'+i], rg=a['q1b_regle_'+i], co=a['q1b_corr_'+i];
+    if(!n && !err && !rg && !co) continue;
+    const valid = n && RONDE_ERR.includes(Number(n)) && !seen.has(n); if(valid){ seen.add(n); s+=0.25; }
+    const ex = n && RONDE_ANS[n];
+    rows+=`<tr><td class="${n?(valid?'ok':'ko'):''}">${esc(n)||'—'}</td><td class="stu">${esc(err)}${ex?`<div class="expect">→ ${ex[0]}</div>`:''}</td><td class="stu">${esc(rg)}${ex?`<div class="expect">→ ${ex[1]}</div>`:''}</td><td class="stu">${esc(co)}${ex?`<div class="expect">→ ${ex[2]}</div>`:''}</td></tr>`;
+  }
+  const missing = RONDE_ERR.filter(n=>!seen.has(String(n)));
+  Q.push({id:'q1b',t:'Q1 b · Règles et corrections',max:3,auto:s,html:`<div class="tw"><table><tr><th>N°</th><th>Erreur (élève → attendu)</th><th>Règle (élève → attendu)</th><th>Correction (élève → attendu)</th></tr>${rows||'<tr><td colspan="4"><i>Pas de réponse</i></td></tr>'}</table></div>
+    <p>Erreurs non traitées : <b>${missing.length?missing.join(', '):'aucune'}</b></p>
+    <p class="auto">Proposition automatique : 0,25 pt par erreur bien identifiée (bon numéro). Ajoute jusqu'à 0,25 pt pour la règle et la correction (0,5 pt par erreur au total).</p>`});
+  // Q2
+  const A=a.q2_A,B=a.q2_B,C=a.q2_C, rg=a.q2_regle;
+  const okOrder = (A||B||C) ? (A==='3'&&B==='1'&&C==='2') : null, okR = rg? rg==='FEFO' : null;
+  s=(okOrder?0.5:0)+(okR?0.5:0);
+  Q.push({id:'q2',t:'Q2 · Rotation FEFO',max:1,auto:s,full:true,html:`<p>Ordre élève : A = <b>${esc(A)||'—'}</b>, B = <b>${esc(B)||'—'}</b>, C = <b>${esc(C)||'—'}</b> ${P(okOrder)} <span class="expect">(attendu : A = 3, B = 1, C = 2)</span></p>
+    <p>Règle : <b>${esc(rg)||'—'}</b> ${P(okR)} <span class="expect">(attendu : FEFO)</span></p><p class="auto">0,5 pt pour l'ordre + 0,5 pt pour la règle (calcul automatique).</p>`});
+  // Q3
+  s=0; rows='';
+  RANGE.forEach((r,i)=>{ const z=a['q3_zone_'+i]; const ok = z? z===r[1] : null; if(ok) s+=0.25;
+    const zl = z==='X'?'Ne se range pas':z;
+    rows+=`<tr><td>${r[0]}</td>${cellRes(zl,ok)}<td class="expect">${r[1]==='X'?'Ne se range pas':r[1]}</td><td class="stu">${esc(a['q3_empl_'+i])}<div class="expect">→ ${r[2]}</div></td><td class="stu">${esc(a['q3_why_'+i])}<div class="expect">→ ${r[3]}</div></td></tr>`; });
+  Q.push({id:'q3',t:'Q3 · Rangement',max:1.5,auto:s,html:`<div class="tw"><table><tr><th>Produit</th><th>Zone élève</th><th>Att.</th><th>Emplacement</th><th>Pourquoi</th></tr>${rows}</table></div><p class="auto">Proposition automatique : 0,25 pt par zone juste. Vérifie l'emplacement et la justification.</p>`});
+  // Q4
+  const t4 = norm(a.q4_text); const hasR = /fefo|premier.*p[ée]rim|date.*(proche|courte)/.test(t4);
+  s = t4 ? (hasR?0.5:0) : 0;
+  Q.push({id:'q4',t:'Q4 · Situation professionnelle',max:1,auto:s,html:`<div class="stu" style="border:1.5px solid var(--line);border-radius:10px;padding:10px;background:#FFFDF6">${esc(a.q4_text)||'<i>Pas de réponse</i>'}</div>
+    <p class="expect">Attendu : règle FEFO (le produit dont la date est la plus proche se place devant et sort en premier) + justification : éviter que les anciens lots dépassent leur date (pertes, démarque).</p>
+    <p class="auto">Proposition automatique : 0,5 pt si la règle FEFO est citée. Ajoute 0,5 pt pour la justification.</p>`});
+  return Q;
+}
+
+/* ---------------- ESPACE PROFESSEUR ---------------- */
+let copies = LS.get('sorbethp_prof_copies', []);    // fichiers importés
+let notes  = LS.get('sorbethp_prof_notes', {});     // corrections enseignant
+let current = null;
+let profTab = 'copies';
+const cid = c => `${c.eval}|${norm(c.nom)}|${norm(c.prenom)}`;
+const gradeOf = c => c.eval===1 ? grade1(c.answers) : grade2(c.answers);
+const maxOf = c => c.eval===1 ? 11 : 9;
+function scoreOf(c){
+  const Q = gradeOf(c), n = notes[cid(c)] || {};
+  const pts = Q.map(q => (n.pts && n.pts[q.id]!==undefined && n.pts[q.id]!=='') ? Number(n.pts[q.id]) : q.auto);
+  return {Q, pts, total: pts.reduce((x,y)=>x+y,0), n};
+}
+const suggestLevel = (t,max)=>{ const r=t/max; return r<0.25?'NA':r<0.5?'EC':r<0.8?'A':'M'; };
+
+function renderProf(){
+  if(!profOk) return `<div class="card lock"><h2>🔒 Espace professeur</h2>
+    <label class="f" for="pc">Code professeur</label><input type="password" id="pc" autocomplete="off"><p class="err hidden" id="pcerr">Code incorrect.</p>
+    <p><button class="btn vio" id="pcok">Entrer</button></p></div>`;
+  const list = [...copies].sort((a,b)=> a.eval-b.eval || a.nom.localeCompare(b.nom));
+  return `<div class="prof">
+  <h1>Espace professeur</h1>
+  <p class="sub">Correction des évaluations · Sorbet Citron</p>
+  <div class="tabs noprint">${[['copies','📥 Copies des élèves'],['c1','📗 Corrigé évaluation 1'],['c2','📘 Corrigé évaluation 2']].map(t=>`<button data-tab="${t[0]}" class="${profTab===t[0]?'on':''}">${t[1]}</button>`).join('')}</div>
+  ${profTab!=='copies' ? renderCorrige(profTab==='c1'?1:2) + '</div>' : `<div class="layout">
+    <aside>
+      <label class="drop noprint" id="drop">📥 <b>Importer les copies</b><br><span style="font-size:.85rem">Glisse les fichiers .json des élèves ici ou clique (plusieurs à la fois).</span>
+        <input type="file" id="files" accept=".json,application/json" multiple class="hidden"></label>
+      <p class="err hidden" id="imperr"></p>
+      <div class="row noprint" style="margin:12px 0">
+        <button class="btn small" id="csv">📊 Bilan classe (Excel)</button>
+        <button class="btn small sec" id="clear">🗑 Tout effacer</button>
+      </div>
+      ${[1,2].map(ev=>{ const L=list.filter(c=>c.eval===ev); return `<h3 style="margin-top:16px">Évaluation ${ev} <span class="auto">(${L.length})</span></h3><ul class="slist">${L.map(c=>{ const sc=scoreOf(c); return `<li data-id="${esc(cid(c))}" class="${current===cid(c)?'on':''}"><span>${esc(c.nom)} ${esc(c.prenom)}</span><span class="tot">${fr(sc.total)} / ${maxOf(c)}</span></li>`; }).join('') || '<li style="cursor:default;color:#888">Aucune copie</li>'}</ul>`; }).join('')}
+    </aside>
+    <section id="detail">${current ? renderCopy(copies.find(c=>cid(c)===current)) : '<div class="card"><p>Importe les fichiers des élèves, puis clique sur un nom pour corriger sa copie.</p><p class="auto">Les copies et tes corrections restent enregistrées sur cet ordinateur (navigateur). Pense à télécharger le bilan de la classe.</p></div>'}</section>
+  </div></div>`}`;
+}
+
+
+const ck = (h, body, pts, bareme) => `<div class="gq"><div class="gh"><b>${h}</b><span class="pill ok">${pts} ${pts==1?"pt":"pts"}</span></div>${body}${bareme?`<p class="auto">Barème : ${bareme}</p>`:''}</div>`;
+const tbl = (head, rows) => `<div class="tw"><table><tr>${head.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+function renderCorrige(n){
+  const head = `<div class="total"><div><div style="font-weight:700">Corrigé — Évaluation ${n}</div><div style="font-size:.85rem;opacity:.85">${n===1?'B1.2 Réceptionner les produits · 11 points':'B1.3 Stocker les produits · 9 points'}</div></div><button class="btn small noprint" id="printc" style="background:#D3A625;color:#3B0A0A">🖨 Imprimer le corrigé</button></div>`;
+  if(n===1) return head
+   + ck('Question 1 · Vocabulaire', tbl(['Mot','Lettre','Définition'], VOC.map(v=>[`<b>${v[0]}</b>`, `<b>${v[1]}</b>`, DEFS.find(d=>d[0]===v[1])[1]])), 2, '0,25 pt par bonne lettre.')
+   + ck('Question 2 · Tableau de contrôle', tbl(['Réf.','Cmd','BL','Qté reçue conforme','Anomalie ?','Laquelle ?','Ce que je fais'], CTRL.map(r=>[`<b>${r[0]}</b>`,r[1],r[2],`<b>${r[3]}</b>`,r[4]==='oui'?'<b>Oui</b>':'Non',r[5],r[6]]))
+       + `<p><b>Nombre total d'anomalies : 5</b> (SC205 date, SD315 quantité, ST420/ST421 référence et taille, SJ530 écart commande/livraison, SD340 état).</p>`, 4, '0,5 pt par ligne (quantité reçue + anomalie + action). Correction auto : 0,25 quantité + 0,25 oui/non, à ajuster.')
+   + ck('Question 3 · Réserves sur le bon de livraison', `<ul>${RESERVES.map(r=>`<li><b>${r[0]}</b> : ${r[2]}</li>`).join('')}</ul><p>Les réserves s'écrivent <b>avant de signer</b> le bon de livraison, avec la date.</p>`, 2, '0,4 pt par réserve précise (référence + quantité + nature de l\'anomalie).')
+   + ck('Question 4 · Fiche de stock', tbl(['Produit','Stock avant','Entrée en stock','Stock après'], FS.map(r=>[r[0],r[1],`<b>${r[2]}</b>`,`<b>${r[3]}</b>`])) + `<p>Seuls les produits <b>conformes</b> entrent en stock (décision de Mme Bertrand).</p>`, 3, '0,25 pt par case juste.');
+  return head
+   + ck('Question 1 a · Correct ou erreur', tbl(['N°','Observation','Réponse'], RONDE.map((r,i)=>[`<b>${i+1}</b>`, r, RONDE_ERR.includes(i+1)?'<b style="color:var(--bad)">Erreur</b>':'<b style="color:var(--ok)">Correct</b>'])) + `<p><b>6 erreurs</b> : 1, 2, 5, 6, 8, 9. Correctes : 3, 4, 7, 10.</p>`, '2,5', '0,25 pt par observation.')
+   + ck('Question 1 b · Règles et corrections', tbl(['N°','Erreur constatée','Règle non respectée','Correction'], RONDE_ERR.map(k=>[`<b>${k}</b>`, ...RONDE_ANS[k]])), 3, '0,5 pt par erreur (0,25 règle + 0,25 correction).')
+   + ck('Question 2 · Rotation des stocks', `<p>Lot A (DDM 31/03/2027) = <b>3</b> · Lot B (DDM 31/12/2026) = <b>1</b> · Lot C (DDM 28/02/2027) = <b>2</b></p><p>Règle : <b>FEFO</b> (First Expired, First Out) : le produit qui périme le premier sort en premier.</p>`, 1, '0,5 pt pour l\'ordre + 0,5 pt pour FEFO.')
+   + ck('Question 3 · Rangement de la livraison', tbl(['Produit','Zone','Emplacement','Pourquoi'], RANGE.map(r=>[r[0], `<b>${r[1]==='X'?'Ne se range pas':r[1]}</b>`, r[2], r[3]])) + `<p>Pièges : les cupcakes et les robes Gryffondor 6-8 ans <b>ne sont pas entrés en stock</b> (document 1 : 0).</p>`, '1,5', '0,25 pt par ligne.')
+   + ck('Question 4 · Situation professionnelle', `<p>On applique le <b>FEFO</b> : le produit dont la date (DDM / DLC) est la plus proche se place <b>devant</b> pour être vendu en premier. Si on met les nouvelles boîtes devant, les anciennes dépassent leur date : elles ne peuvent plus être vendues correctement et le magasin perd de l'argent (<b>démarque</b>, gaspillage).</p>`, 1, '0,5 pt règle nommée + 0,5 pt justification.');
+}
+
+function renderCopy(c){
+  if(!c) return '';
+  const {Q, pts, total, n} = scoreOf(c), max = maxOf(c);
+  const lvl = n.level || suggestLevel(total,max);
+  return `<div class="total"><div><div style="font-weight:700">${esc(c.nom)} ${esc(c.prenom)} · ${esc(c.classe)}</div><div style="font-size:.85rem;opacity:.85">Évaluation ${c.eval} · ${c.eval===1?'B1.2 Réceptionner':'B1.3 Stocker'} · rendu le ${new Date(c.date).toLocaleString('fr-FR')}</div></div>
+    <div class="big">${fr(total)} / ${max}</div>
+    <div><div style="font-size:.8rem;margin-bottom:4px">Niveau ${n.level?'':'(proposé)'}</div><div class="lv">${['NA','EC','A','M'].map(l=>`<label><input type="radio" name="lvl" value="${l}" ${lvl===l?'checked':''}><span>${l}</span></label>`).join('')}</div></div></div>
+  ${Q.map((q,i)=>`<div class="gq"><div class="gh"><b>${q.t}</b><span class="score">Note : <input type="number" step="0.25" min="0" max="${q.max}" data-q="${q.id}" value="${pts[i]}"> / ${fr(q.max)} <span class="auto">(auto : ${fr(q.auto)})</span></span></div>${q.html}</div>`).join('')}
+  <div class="gq"><b>Commentaire pour l'élève</b><textarea id="comment" rows="3" style="margin-top:8px">${esc(n.comment||'')}</textarea></div>
+  <div class="row noprint"><button class="btn vio" id="print">🖨 Imprimer cette copie corrigée</button><button class="btn sec" id="reset">↺ Revenir aux notes automatiques</button><button class="btn sec" id="del">Retirer cette copie</button></div>`;
+}
+
+function bindProf(){
+  if(!profOk){
+    const go=()=>{ if($('#pc').value.trim().toUpperCase()===CODE_PROF){ profOk=true; sessionStorage.setItem('sorbethp_prof','1'); render('prof'); } else $('#pcerr').classList.remove('hidden'); };
+    $('#pcok').onclick=go; $('#pc').onkeydown=e=>{ if(e.key==='Enter') go(); }; return;
+  }
+  document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ profTab=b.dataset.tab; render('prof'); });
+  if(profTab!=='copies'){ const pc=$('#printc'); if(pc) pc.onclick=()=>window.print(); return; }
+  const drop=$('#drop'), fi=$('#files');
+  const handle = async files=>{
+    let bad=[];
+    for(const f of files){
+      try{ const d=JSON.parse(await f.text()); if(d.app!=='sorbet-citron-hp'||!d.answers) throw 0; d.eval=Number(d.eval);
+        const i=copies.findIndex(c=>cid(c)===cid(d)); if(i>=0) copies[i]=d; else copies.push(d); }
+      catch(e){ bad.push(f.name); }
+    }
+    LS.set('sorbethp_prof_copies', copies); render('prof');
+    if(bad.length){ const e=$('#imperr'); e.textContent='Fichier(s) non reconnu(s) : '+bad.join(', '); e.classList.remove('hidden'); }
+  };
+  fi.onchange=()=>handle([...fi.files]);
+  drop.ondragover=e=>{ e.preventDefault(); drop.classList.add('over'); };
+  drop.ondragleave=()=>drop.classList.remove('over');
+  drop.ondrop=e=>{ e.preventDefault(); drop.classList.remove('over'); handle([...e.dataTransfer.files]); };
+  document.querySelectorAll('.slist li[data-id]').forEach(li=>li.onclick=()=>{ current=li.dataset.id; render('prof'); });
+  $('#clear').onclick=()=>{ if(confirm('Effacer toutes les copies importées et toutes les corrections ?')){ copies=[]; notes={}; current=null; LS.set('sorbethp_prof_copies',copies); LS.set('sorbethp_prof_notes',notes); render('prof'); } };
+  $('#csv').onclick=exportCSV;
+  if(!current) return;
+  const c = copies.find(x=>cid(x)===current); if(!c) return;
+  const id=cid(c); notes[id]=notes[id]||{pts:{}};
+  const save=()=>{ LS.set('sorbethp_prof_notes',notes); };
+  document.querySelectorAll('input[data-q]').forEach(el=>el.onchange=()=>{ notes[id].pts=notes[id].pts||{}; let v=el.value===''?'':Math.max(0,Math.min(Number(el.max),Number(el.value))); notes[id].pts[el.dataset.q]=v; save(); setTimeout(()=>render('prof'),0); });
+  document.querySelectorAll('input[name=lvl]').forEach(el=>el.onchange=()=>{ notes[id].level=el.value; save(); setTimeout(()=>render('prof'),0); });
+  $('#comment').oninput=e=>{ notes[id].comment=e.target.value; save(); };
+  $('#print').onclick=()=>window.print();
+  $('#reset').onclick=()=>{ notes[id]={comment:notes[id].comment||''}; save(); render('prof'); };
+  $('#del').onclick=()=>{ if(confirm('Retirer la copie de '+c.prenom+' '+c.nom+' ?')){ copies=copies.filter(x=>cid(x)!==id); delete notes[id]; current=null; LS.set('sorbethp_prof_copies',copies); save(); render('prof'); } };
+}
+
+function exportCSV(){
+  const lines=[];
+  [1,2].forEach(ev=>{
+    const L=copies.filter(c=>c.eval===ev).sort((a,b)=>a.nom.localeCompare(b.nom)); if(!L.length) return;
+    const Q=gradeOf(L[0]);
+    lines.push([`Évaluation ${ev} – ${ev===1?'B1.2 Réceptionner':'B1.3 Stocker'}`]);
+    lines.push(['Nom','Prénom','Classe',...Q.map(q=>`${q.t} (/${fr(q.max)})`),`Total (/${maxOf(L[0])})`,'Note /20','Niveau','Commentaire']);
+    L.forEach(c=>{ const s=scoreOf(c); lines.push([c.nom,c.prenom,c.classe,...s.pts.map(fr),fr(s.total),fr(Math.round(s.total/maxOf(c)*20*4)/4),s.n.level||suggestLevel(s.total,maxOf(c)),(s.n.comment||'').replace(/\n/g,' ')]); });
+    lines.push([]);
+  });
+  if(!lines.length){ alert('Aucune copie importée.'); return; }
+  const csv='﻿'+lines.map(r=>r.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(';')).join('\r\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download='Bilan_Sorbet_Citron_HP.csv'; document.body.appendChild(a); a.click(); a.remove();
+}
+
+
+/* ---------- décor : étoiles et bougies ---------- */
+(function(){ const sky=document.getElementById('sky'); if(!sky) return; let h='';
+  for(let i=0;i<140;i++){ h+=`<span class="star${i%9===0?' big':''}" style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${(Math.random()*3).toFixed(2)}s;animation-duration:${(2+Math.random()*3).toFixed(2)}s"></span>`; }
+  [[3,22],[6,58],[2.5,82],[94,30],[96.5,64],[92,88]].forEach(([x,y],i)=>{ h+=`<span class="candle" style="left:${x}%;top:${y}%;animation-delay:${i*1.1}s"></span>`; });
+  sky.innerHTML=h; })();
+function updatePotion(n){
+  const pot=document.getElementById('potion'); if(!pot) return;
+  if(!n){ pot.classList.add('hidden'); return; }
+  const ans=LS.get('sorbethp_eval'+n,{}); const keys=new Set();
+  app.querySelectorAll('[data-k]').forEach(el=>{ if(!el.dataset.k.startsWith('chk_')) keys.add(el.dataset.k); });
+  let done=0; keys.forEach(k=>{ const v=ans[k]; if(v!==undefined && String(v).trim()!=='') done++; });
+  const pct = keys.size ? Math.round(done/keys.size*100) : 0;
+  pot.classList.remove('hidden'); pot.classList.toggle('full', pct>=100);
+  document.getElementById('potpct').textContent = pct+' %' + (pct>=100?' ✨':'');
+  const r=document.getElementById('liqr'); r.setAttribute('y', String(8+ (1-pct/100)*40));
+}
+function sparkles(){
+  for(let i=0;i<46;i++){ const e=document.createElement('span'); e.className='spark'; e.textContent=i%3?'✦':'✧';
+    e.style.left=(window.innerWidth/2)+'px'; e.style.top=(window.innerHeight/2)+'px'; e.style.fontSize=(14+Math.random()*22)+'px';
+    e.style.setProperty('--dx',((Math.random()-.5)*window.innerWidth*.9)+'px'); e.style.setProperty('--dy',((Math.random()-.5)*window.innerHeight*.9)+'px');
+    e.style.animationDelay=(Math.random()*.3)+'s'; document.body.appendChild(e); setTimeout(()=>e.remove(),2200); }
+}
+
+/* ---------------- ACCUEIL & NAVIGATION ---------------- */
+function renderHome(){
+  return `<section class="scene"><svg class="shop" viewBox="0 0 900 380" role="img" aria-label="La boutique Sorbet Citron, la nuit d'Halloween">
+<defs><linearGradient id="hn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#120B24"/><stop offset=".7" stop-color="#2A1440"/><stop offset="1" stop-color="#3A1A3A"/></linearGradient>
+<radialGradient id="hw" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#FFF1B0"/><stop offset=".6" stop-color="#F7C548"/><stop offset="1" stop-color="#C8811A"/></radialGradient>
+<radialGradient id="hglow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="rgba(247,197,72,.55)"/><stop offset="1" stop-color="rgba(247,197,72,0)"/></radialGradient>
+<linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6DE8D"/><stop offset=".5" stop-color="#D3A625"/><stop offset="1" stop-color="#A97E10"/></linearGradient>
+<linearGradient id="hs" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4B3560"/><stop offset=".5" stop-color="#5C4272"/><stop offset="1" stop-color="#4B3560"/></linearGradient></defs>
+<rect width="900" height="380" fill="url(#hn)"/>
+<g fill="#FFF6D6">${Array.from({length:60},(_,i)=>`<circle cx="${(i*379+i*i*13)%900}" cy="${(i*211+i*i*7)%230}" r="${i%5?1.1:1.9}" opacity="${.4+((i*7)%6)/10}"/>`).join('')}</g>
+<circle cx="790" cy="70" r="40" fill="#FCEBB6"/><circle cx="790" cy="70" r="70" fill="url(#hglow)"/>
+<g fill="#0E0A1F"><path d="M640 90 q8 -10 16 0 q8 -10 16 0 q-8 2 -16 10 q-8 -8 -16 -10z"/><path d="M700 130 q6 -8 12 0 q6 -8 12 0 q-6 2 -12 8 q-6 -6 -12 -8z"/><path d="M120 70 q7 -9 14 0 q7 -9 14 0 q-7 2 -14 9 q-7 -7 -14 -9z"/></g>
+<path d="M0 330 Q200 300 450 318 T900 312 V380 H0Z" fill="#170F2A"/>
+<g><rect x="260" y="120" width="380" height="215" fill="url(#hs)" stroke="#2A1A3A" stroke-width="3"/>
+<path d="M235 125 L450 40 L665 125 Z" fill="#2A1440" stroke="#1B0E2E" stroke-width="3"/>
+<rect x="560" y="55" width="26" height="50" fill="#3A2350"/><circle cx="450" cy="90" r="20" fill="url(#hw)" stroke="#2A1440" stroke-width="4"/><path d="M450 70 V110 M430 90 H470" stroke="#2A1440" stroke-width="3"/>
+<rect x="296" y="136" width="308" height="50" rx="8" fill="url(#hg)" stroke="#7A5A08" stroke-width="2"/>
+<text x="450" y="169" text-anchor="middle" font-family="Cinzel,Georgia,serif" font-weight="700" font-size="24" fill="#3B0A0A" textLength="216" lengthAdjust="spacingAndGlyphs">SORBET CITRON</text>
+<ellipse cx="318" cy="161" rx="11" ry="8" fill="#F7D417" stroke="#B88A00"/><ellipse cx="582" cy="161" rx="11" ry="8" fill="#F7D417" stroke="#B88A00"/>
+<ellipse cx="370" cy="262" rx="120" ry="80" fill="url(#hglow)"/>
+<rect x="285" y="200" width="160" height="110" rx="6" fill="url(#hw)" stroke="#2A1A3A" stroke-width="5"/>
+<path d="M365 200 V310 M285 255 H445" stroke="#2A1A3A" stroke-width="4"/>
+<g fill="#5A0B16"><path d="M305 250 L318 214 L331 250 Z"/><rect x="300" y="249" width="36" height="4" rx="2"/><rect x="380" y="226" width="5" height="26" transform="rotate(-20 382 239)" fill="#6B3E1F"/><circle cx="410" cy="242" r="9" fill="#C8811A"/><rect x="300" y="282" width="22" height="22" rx="3" fill="#3A2412"/><rect x="335" y="285" width="18" height="19" rx="3" fill="#740001"/><rect x="390" y="280" width="34" height="24" rx="4" fill="#2E1650"/></g>
+<path d="M480 310 V235 a45 45 0 0 1 90 0 V310 Z" fill="#5A0B16" stroke="#2A1A3A" stroke-width="4"/>
+<path d="M495 238 a30 30 0 0 1 60 0 V255 H495Z" fill="url(#hw)" opacity=".9"/><circle cx="555" cy="275" r="4" fill="#D3A625"/>
+<g><line x1="470" y1="200" x2="470" y2="214" stroke="#2A1A3A" stroke-width="2"/><rect x="462" y="214" width="16" height="22" rx="4" fill="url(#hw)" stroke="#2A1A3A" stroke-width="2"/><circle cx="470" cy="225" r="26" fill="url(#hglow)"/>
+<line x1="582" y1="200" x2="582" y2="214" stroke="#2A1A3A" stroke-width="2"/><rect x="574" y="214" width="16" height="22" rx="4" fill="url(#hw)" stroke="#2A1A3A" stroke-width="2"/><circle cx="582" cy="225" r="26" fill="url(#hglow)"/></g>
+<rect x="250" y="308" width="400" height="10" fill="#2A1A3A"/></g>
+<g><ellipse cx="240" cy="320" rx="26" ry="20" fill="#E67E22" stroke="#9A4A0B" stroke-width="2"/><path d="M228 312 l5 -5 5 5z M244 312 l5 -5 5 5z M230 326 q10 8 20 0" fill="#FFD66B"/><rect x="237" y="296" width="6" height="8" fill="#3B7A22"/>
+<ellipse cx="672" cy="324" rx="20" ry="16" fill="#E67E22" stroke="#9A4A0B" stroke-width="2"/><path d="M663 318 l4 -4 4 4z M675 318 l4 -4 4 4z M664 329 q8 6 16 0" fill="#FFD66B"/><rect x="669" y="304" width="5" height="7" fill="#3B7A22"/></g>
+<g transform="translate(700 228) scale(.42)">${MASCOT.replace('<svg viewBox="95 52 240 262" aria-hidden="true">','<svg viewBox="95 52 240 262" width="240" height="262">')}</g>
+</svg><div class="stitle"><h1>Sorbet Citron</h1><p>Opération Halloween au rayon Monde magique · Terminale CAP Équipier Polyvalent du Commerce</p></div></section>
+  ${citro('Bienvenue dans la boutique ! Je suis <b>Citro</b>. Écris ton nom, puis choisis l\'épreuve que ton enseignante t\'a donnée.')}
+  ${identBlock()}
+  <div class="card"><h2>✨ Choisis ton épreuve</h2>
+    <div class="choice">
+      <button data-go="eval1"><span class="door">📦</span><b>Épreuve 1 · La livraison</b><span>Je réceptionne la livraison (B1.2)</span></button>
+      <button data-go="eval2"><span class="door">🗝️</span><b>Épreuve 2 · La réserve</b><span>Je range et j'organise la réserve (B1.3) · code magique demandé</span></button>
+    </div></div>`;
+}
+
+function render(view){
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on', b.dataset.go===view));
+  app.innerHTML = view==='eval1' ? renderEval1() : view==='eval2' ? renderEval2() : view==='prof' ? renderProf() : renderHome();
+  if(location.hash.slice(1)!==view) history.replaceState(null,'','#'+view);
+  bindIdent();
+  app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ render(b.dataset.go); window.scrollTo(0,0); });
+  if(view==='eval1') bindAnswers(1);
+  if(view==='eval2'){
+    if(unlocked2) bindAnswers(2);
+    else { const go=()=>{ if($('#c2').value.trim().toUpperCase()===CODE_EVAL2){ unlocked2=true; sessionStorage.setItem('sorbethp_u2','1'); render('eval2'); } else $('#c2err').classList.remove('hidden'); };
+      $('#c2ok').onclick=go; $('#c2').onkeydown=e=>{ if(e.key==='Enter') go(); }; }
+  }
+  if(view==='prof') bindProf();
+  updatePotion(view==='eval1' ? 1 : (view==='eval2' && unlocked2) ? 2 : 0);
+}
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{ render(b.dataset.go); window.scrollTo(0,0); });
+render(['eval1','eval2','prof'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home');
+</script>
+</body>
+</html>
